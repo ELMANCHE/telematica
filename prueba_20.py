@@ -16,7 +16,7 @@ def calcular_subredes():
     ip_usuario = input("Ingrese IP con máscara (ej. 10.0.0.0/8): ") or "10.0.0.0/8"
     bits_subred = int(input("Bits para subredes (ej. 2): ") or 2)
     
-    # Procesar entrada
+    # Para procesar entrada
     if '/' in ip_usuario:
         ip_str, mascara_str = ip_usuario.split('/')
         red_original = ipaddress.IPv4Network(f"{ip_str}/{mascara_str}", strict=False)
@@ -25,20 +25,20 @@ def calcular_subredes():
         _, mascara_defecto, _ = obtener_clase(ip_str)
         red_original = ipaddress.IPv4Network(f"{ip_str}/{mascara_defecto}", strict=False)
     
-    # Calcular nueva máscara
+    # Esta parte es para calcular nueva máscara
     nueva_mascara = red_original.prefixlen + bits_subred
     if nueva_mascara > 32:
         print(f"[[3]] Error: Máscara /{nueva_mascara} excede 32 bits")
         return
     
-    # Generar subredes
+    # Esta parte la uso para generar las subredes
     try:
         subredes = list(red_original.subnets(new_prefix=nueva_mascara))
     except ValueError as e:
         print(f"[[5]] Error en cálculo: {e}")
         return
     
-    # Mostrar resultados
+    # Muestra  resultados
     clase, mascara_clase, _ = obtener_clase(str(red_original.network_address))
     print(f"\n--- Red Original: {red_original} ---")
     print(f"Clase: {clase}")
@@ -48,7 +48,7 @@ def calcular_subredes():
     print(f"Hosts por subred: {subredes[0].num_addresses - 2}\n")
     
     print("Tabla de subredes:")
-    # Headers according to the Excel example
+    # cabeza de la tabla
     print(f"{'Gerencia':<10} | {'Red':<18} | {'Primera IP':<18} | {'Ultima IP':<18} | {'Broadcast':<18} | {'Gateway':<18} | {'Máscara':<15}")
     
     for idx, subred in enumerate(subredes):
@@ -57,8 +57,8 @@ def calcular_subredes():
         ultimo_host = broadcast - 1
         rango = f"{primer_host} - {ultimo_host}"
         
-        # Extracting required fields
-        gerencia = idx  # Assuming starts at 0
+
+        gerencia = idx  # comienza en 0
         red = str(subred.network_address)
         primera_ip = str(primer_host)
         ultima_ip = str(ultimo_host)
@@ -66,7 +66,7 @@ def calcular_subredes():
         gateway = str(primer_host)
         mascara = str(subred.netmask)
         
-        # Formatting the row
+        
         print(f"{gerencia:<10} | {red:<18} | {primera_ip:<18} | {ultima_ip:<18} | {broadcast_ip:<18} | {gateway:<18} | {mascara:<15}")
 
 calcular_subredes()
